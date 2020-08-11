@@ -4,16 +4,19 @@ import styled from "styled-components";
 
 import { useDrag } from "react-use-gesture";
 
-export default function App() {
+const App = () => {
   const props = useSpring({ to: { x: 50 }, from: { x: -100, y: 50 } });
-
   const [{ x, y, scale }, set] = useSpring(() => ({ x: 0, y: 0, scale: 1 }));
+  const maxX = 30;
+  const maxY = 30;
   const bind = useDrag(
     ({ down, movement: [mx, my], direction: [xDir], velocity }) => {
       const triggerToGo = velocity > 0.2;
       const dir = xDir < 0 ? -1 : 1; // Direction should either point left or right
-      const x = down ? mx : triggerToGo && dir < 0 ? dir * 500 : 0;
-      const y = down ? my : 0;
+      const tx = (mx > maxX) ? maxX : mx;
+      const ty = (my > maxY) ? maxY : my;
+      const x = down ? tx : triggerToGo && dir < 0 ? dir * 500 : 0;
+      const y = down ? ty : 0;
       const scale = down ? 1.01 : 1;
       set({ x, y, scale });
     }
@@ -52,3 +55,5 @@ const Panel = styled.div`
   transform: translateY(50px);
 `;
 const AnimatedPanel = animated(Panel);
+
+export default App;
